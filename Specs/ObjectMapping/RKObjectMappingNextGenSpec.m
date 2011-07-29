@@ -17,6 +17,7 @@
 #import "RKObjectMapper.h"
 #import "RKObjectMapper_Private.h"
 #import "RKObjectMapperError.h"
+#import "RKDynamicMappingModels.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1288,6 +1289,43 @@
     [mappingProvider addObjectMapping:secondMapping];
     [mappingProvider setObjectMapping:thirdMapping forKeyPath:@"third"];
     assertThat([mappingProvider objectMappingsForClass:[RKExampleUser class]], is(equalTo([NSArray arrayWithObjects:firstMapping, secondMapping, thirdMapping, nil])));
+}
+
+#pragma mark - RKDynamicObjectMapping
+
+- (void)itShouldMapASingleObjectDynamically {
+    RKObjectMapping* boyMapping = [RKObjectMapping mappingForClass:[Boy class]];
+    [boyMapping mapAttributes:@"name", nil];
+    RKObjectMapping* girlMapping = [RKObjectMapping mappingForClass:[Girl class]];
+    [girlMapping mapAttributes:@"name", nil];
+    RKDynamicObjectMapping* dynamicMapping = [RKDynamicObjectMapping dynamicMapping];
+    dynamicMapping.delegateBlock = ^ RKObjectMapping* (id mappableData) {
+        if ([[mappableData valueForKey:@"type"] isEqualToString:@"Boy"]) {
+            return boyMapping;
+        } else if ([[mappableData valueForKey:@"type"] isEqualToString:@"Girl"]) {
+            return girlMapping;
+        }
+        
+        return nil;
+    };
+    
+    RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
+    [provider setDynamicMapping:dynamicMapping forKeyPath:@""];
+    id mockProvider = [OCMockObject partialMockForObject:provider];
+    
+    id userInfo = RKSpecParseFixture(@"boy.json");
+    RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
+    RKExampleUser* user = [[mapper performMapping] asObject];
+    [expectThat([user isKindOfClass:[Boy class]]) should:be(YES)];
+    [expectThat(user.name) should:be(@"Blake Watters")];
+}
+
+- (void)itShouldMapASingleObjectDynamicallyWithADeclarativeMatcher {
+    
+}
+
+- (void)itShouldACollectionOfObjectsDynamically {
+    
 }
 
 @end

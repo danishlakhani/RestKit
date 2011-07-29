@@ -397,4 +397,12 @@ relationship. Relationships are processed using an object mapping as well.
  */
 - (id)defaultValueForMissingAttribute:(NSString*)attributeName;
 
+/**
+ Returns an auto-released object that can be used to apply this object mapping
+ given a set of mappable data. For transient objects, this generally returns an
+ instance of the objectClass. For Core Data backed persistent objects, mappableData
+ will be inspected to search for primary key data to lookup existing object instances.
+ */
+- (id)mappableObjectForData:(id)mappableData;
+
 @end

@@ -241,13 +241,17 @@
         RKObjectMapping* objectMapping = [keyPathsAndObjectMappings objectForKey:keyPath];
         if ([self.delegate respondsToSelector:@selector(objectMapper:didFindMappableObject:atKeyPath:withMapping:)]) {
             [self.delegate objectMapper:self didFindMappableObject:mappableValue atKeyPath:keyPath withMapping:objectMapping];
-        }        
+        }
         if (objectMapping.forceCollectionMapping || [mappableValue isKindOfClass:[NSArray class]] || [mappableValue isKindOfClass:[NSSet class]]) {
             RKLogDebug(@"Found mappable collection at keyPath '%@': %@", keyPath, mappableValue);
             mappingResult = [self mapCollection:mappableValue atKeyPath:keyPath usingMapping:objectMapping];
         } else {
             RKLogDebug(@"Found mappable data at keyPath '%@': %@", keyPath, mappableValue);
-            mappingResult = [self mapObject:mappableValue atKeyPath:keyPath usingMapping:objectMapping];
+            // TODO: Logging for dynamic
+            RKObjectMapping* concreteMapping = [objectMapping isKindOfClass:[RKDynamicObjectMapping class]] ? 
+                [(RKDynamicObjectMapping*)objectMapping objectMappingForData:mappableValue] :
+                objectMapping;
+            mappingResult = [self mapObject:mappableValue atKeyPath:keyPath usingMapping:concreteMapping];
         }
         
         if (mappingResult) {

@@ -7,6 +7,7 @@
 //
 
 #import "RKObjectMapping.h"
+#import "RKDynamicObjectMapping.h"
 
 /**
  Responsible for providing object mappings to an instance of the object mapper
@@ -34,6 +35,7 @@
 /**
  Returns the object mapping to use for mapping the specified keyPath into an object graph
  */
+// TODO: Becomes mappingForKeyPath: that returns id??? to handle dynamic...
 - (RKObjectMapping*)objectMappingForKeyPath:(NSString*)keyPath;
 
 /**
@@ -110,5 +112,14 @@
  which has been previously registered.
  */
 - (RKObjectMapping*)serializationMappingForClass:(Class)objectClass;
+
+/**
+ Sets a dynamic object mapping for the specified callback. Dynamic mappings can be used to determine the appropriate
+ type of mapping based on the data being mapped
+ 
+ @see RKDynamicObjectMapping
+ */
+// TODO: Should we just tag dynamic and concrete mappings with a protocol so we don't need this method???
+- (void)setDynamicMapping:(RKDynamicObjectMapping*)dynamicMapping forKeyPath:(NSString*)keyPath;
 
 @end
