@@ -1393,4 +1393,70 @@
     assertThat(girl.name, is(equalTo(@"Jane Doe")));
 }
 
+- (void)itShouldBeAbleToDeclineMappingAnObjectByReturningANilObjectMapping {
+    RKObjectMapping* boyMapping = [RKObjectMapping mappingForClass:[Boy class]];
+    [boyMapping mapAttributes:@"name", nil];
+    RKObjectMapping* girlMapping = [RKObjectMapping mappingForClass:[Girl class]];
+    [girlMapping mapAttributes:@"name", nil];
+    RKObjectPolymorphicMapping* dynamicMapping = [RKObjectPolymorphicMapping polymorphicMapping];
+    dynamicMapping.delegateBlock = ^ RKObjectMapping* (id mappableData) {
+        if ([[mappableData valueForKey:@"type"] isEqualToString:@"Boy"]) {
+            return boyMapping;
+        } else if ([[mappableData valueForKey:@"type"] isEqualToString:@"Girl"]) {
+            // NO GIRLS ALLOWED(*$!)(*
+            return nil;
+        }
+        
+        return nil;
+    };
+    
+    RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
+    [provider setMapping:dynamicMapping forKeyPath:@""];
+    id mockProvider = [OCMockObject partialMockForObject:provider];
+    
+    id userInfo = RKSpecParseFixture(@"mixed.json");
+    RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
+    NSArray* boys = [[mapper performMapping] asCollection];
+    assertThat(boys, hasCountOf(1));
+    Boy* user = [boys objectAtIndex:0];
+    assertThat(user, is(instanceOf([Boy class])));
+    assertThat(user.name, is(equalTo(@"Blake Watters")));
+}
+
+- (void)itShouldBeAbleToDeclineMappingObjectsInARelationshipByReturningANilObjectMapping {
+    RKObjectMapping* boyMapping = [RKObjectMapping mappingForClass:[Boy class]];
+    [boyMapping mapAttributes:@"name", nil];
+    RKObjectMapping* girlMapping = [RKObjectMapping mappingForClass:[Girl class]];
+    [girlMapping mapAttributes:@"name", nil];
+    RKObjectPolymorphicMapping* dynamicMapping = [RKObjectPolymorphicMapping polymorphicMapping];
+    dynamicMapping.delegateBlock = ^ RKObjectMapping* (id mappableData) {
+        if ([[mappableData valueForKey:@"type"] isEqualToString:@"Boy"]) {
+            return boyMapping;
+        } else if ([[mappableData valueForKey:@"type"] isEqualToString:@"Girl"]) {
+            // NO GIRLS ALLOWED(*$!)(*
+            return nil;
+        }
+        
+        return nil;
+    };
+    [boyMapping mapKeyPath:@"friends" toRelationship:@"friends" withMapping:dynamicMapping];
+    
+    RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
+    [provider setMapping:dynamicMapping forKeyPath:@""];
+    id mockProvider = [OCMockObject partialMockForObject:provider];
+    
+    id userInfo = RKSpecParseFixture(@"friends.json");
+    RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
+    Boy* blake = [[mapper performMapping] asObject];
+    assertThat(blake, is(notNilValue()));
+    assertThat(blake.name, is(equalTo(@"Blake Watters")));
+    assertThat(blake, is(instanceOf([Boy class])));
+    NSArray* friends = blake.friends;
+    
+    assertThat(friends, hasCountOf(1));
+    assertThat([friends objectAtIndex:0], is(instanceOf([Boy class])));
+    Boy* boy = [friends objectAtIndex:0];
+    assertThat(boy.name, is(equalTo(@"John Doe")));
+}
+
 @end

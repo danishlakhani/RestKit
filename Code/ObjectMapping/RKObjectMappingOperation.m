@@ -356,10 +356,15 @@ BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
                 RKObjectMapping* objectMapping = nil;
                 if ([abstractMapping isKindOfClass:[RKObjectPolymorphicMapping class]]) {
                     objectMapping = [(RKObjectPolymorphicMapping*)abstractMapping objectMappingForDictionary:nestedObject];
+                    if (! objectMapping) {
+                        RKLogDebug(@"Mapping %@ declined mapping for data %@: returned nil objectMapping", abstractMapping, nestedObject);
+                        continue;
+                    }
                 } else if ([abstractMapping isKindOfClass:[RKObjectMapping class]]) {
                     objectMapping = (RKObjectMapping*)abstractMapping;
+                } else {
+                    NSAssert(objectMapping, @"Encountered unknown mapping type '%@'", NSStringFromClass([abstractMapping class]));
                 }
-                NSAssert(objectMapping, @"Encountered unknown mapping type '%@'", NSStringFromClass([abstractMapping class]));
                 id mappedObject = [objectMapping mappableObjectForData:nestedObject];
                 if ([self mapNestedObject:nestedObject toObject:mappedObject withRealtionshipMapping:relationshipMapping]) {
                     [destinationObject addObject:mappedObject];

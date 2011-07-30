@@ -160,6 +160,10 @@
     
     for (id mappableObject in objectsToMap) {
         id destinationObject = [self objectWithMapping:mapping andData:mappableObject];
+        if (! destinationObject) {            
+            continue;
+        }
+        
         BOOL success = [self mapFromObject:mappableObject toObject:destinationObject atKeyPath:keyPath usingMapping:mapping];
         if (success) {
             [mappedObjects addObject:destinationObject];
@@ -274,14 +278,22 @@
     return [RKObjectMappingResult mappingResultWithDictionary:results];
 }
 
-- (id)objectWithMapping:(RKObjectAbstractMapping*)objectMapping andData:(id)mappableData {
-    NSAssert(! [objectMapping isMemberOfClass:[RKObjectAbstractMapping class]], @"Expected a concrete subclass of RKObjectAbstractMapping");
-    if ([objectMapping isKindOfClass:[RKObjectPolymorphicMapping class]]) {
-        objectMapping = [(RKObjectPolymorphicMapping*)objectMapping objectMappingForDictionary:mappableData];
+- (id)objectWithMapping:(RKObjectAbstractMapping*)abstractMapping andData:(id)mappableData {
+    NSAssert(! [abstractMapping isMemberOfClass:[RKObjectAbstractMapping class]], @"Expected a concrete subclass of RKObjectAbstractMapping");
+    RKObjectMapping* objectMapping = nil;
+    if ([abstractMapping isKindOfClass:[RKObjectPolymorphicMapping class]]) {
+        objectMapping = [(RKObjectPolymorphicMapping*)abstractMapping objectMappingForDictionary:mappableData];
+        if (! objectMapping) {
+            RKLogDebug(@"Mapping %@ declined mapping for data %@: returned nil objectMapping", abstractMapping, mappableData);
+        }
+    } else if ([abstractMapping isKindOfClass:[RKObjectMapping class]]) {
+        objectMapping = (RKObjectMapping*)abstractMapping;
+    } else {
+        NSAssert(objectMapping, @"Encountered unknown mapping type '%@'", NSStringFromClass([abstractMapping class]));
     }
     
-    if ([objectMapping isKindOfClass:[RKObjectMapping class]]) {
-        return [(RKObjectMapping*)objectMapping mappableObjectForData:mappableData];
+    if (objectMapping) {
+        return [objectMapping mappableObjectForData:mappableData];
     }
     
     return nil;
