@@ -53,7 +53,7 @@
 		250D5C0013A069C400471F0E /* lcl_config_components.h in Headers */ = {isa = PBXBuildFile; fileRef = 250D5BFF13A069C400471F0E /* lcl_config_components.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		250D5C0213A069EA00471F0E /* lcl_config_extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = 250D5C0113A069EA00471F0E /* lcl_config_extensions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		250D5C0413A06A4D00471F0E /* lcl_config_logger.h in Headers */ = {isa = PBXBuildFile; fileRef = 250D5C0313A06A4D00471F0E /* lcl_config_logger.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		250F060913E3A1D900FAAFBF /* RKObjectAbstractMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 250F060713E3A1D800FAAFBF /* RKObjectAbstractMapping.h */; };
+		250F060913E3A1D900FAAFBF /* RKObjectAbstractMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 250F060713E3A1D800FAAFBF /* RKObjectAbstractMapping.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		250F060A13E3A1D900FAAFBF /* RKObjectAbstractMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 250F060813E3A1D900FAAFBF /* RKObjectAbstractMapping.m */; };
 		250F060C13E3B2F900FAAFBF /* friends.json in Resources */ = {isa = PBXBuildFile; fileRef = 250F060B13E3B2F900FAAFBF /* friends.json */; };
 		2515E7BA13B36A7D00E013A4 /* ArrayOfResults.json in Resources */ = {isa = PBXBuildFile; fileRef = 2515E7B913B36A7D00E013A4 /* ArrayOfResults.json */; };
@@ -68,8 +68,6 @@
 		251D14AC133597B800959061 /* RKManagedObjectLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 251D14AA133597B800959061 /* RKManagedObjectLoader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		251D14AD133597B800959061 /* RKManagedObjectLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 251D14AB133597B800959061 /* RKManagedObjectLoader.m */; };
 		2523363E11E7A1F00048F9B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F6C3A9510FE7524008F47C5 /* UIKit.framework */; };
-		252CF8B213E250730093BBD6 /* RKObjectPolymorphicMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 252CF8B013E250730093BBD6 /* RKObjectPolymorphicMapping.h */; };
-		252CF8B313E250730093BBD6 /* RKObjectPolymorphicMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 252CF8B113E250730093BBD6 /* RKObjectPolymorphicMapping.m */; };
 		252CF8B613E254C60093BBD6 /* RKObjectPolymorphicMappingSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 252CF8B513E254C60093BBD6 /* RKObjectPolymorphicMappingSpec.m */; };
 		252CF8B913E255D70093BBD6 /* boy.json in Resources */ = {isa = PBXBuildFile; fileRef = 252CF8B813E255D70093BBD6 /* boy.json */; };
 		252CF8BB13E255E20093BBD6 /* girl.json in Resources */ = {isa = PBXBuildFile; fileRef = 252CF8BA13E255E20093BBD6 /* girl.json */; };
@@ -267,6 +265,8 @@
 		25DBB3A513A2506C00CE90F1 /* RKManagedObjectMappingOperationSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 257FB70C1395DEB5003A628E /* RKManagedObjectMappingOperationSpec.m */; };
 		25F5182513724866009B2E22 /* RKObjectRelationshipMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 25F5182313724865009B2E22 /* RKObjectRelationshipMapping.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		25F5182613724866009B2E22 /* RKObjectRelationshipMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 25F5182413724866009B2E22 /* RKObjectRelationshipMapping.m */; };
+		25FB6D5613E4836C00F48969 /* RKObjectPolymorphicMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 252CF8B013E250730093BBD6 /* RKObjectPolymorphicMapping.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		25FB6DBD13E4858400F48969 /* RKObjectPolymorphicMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 252CF8B113E250730093BBD6 /* RKObjectPolymorphicMapping.m */; };
 		3F032A7910FFB89100F35142 /* RKCat.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F032A7810FFB89100F35142 /* RKCat.m */; };
 		3F032AA810FFBBCD00F35142 /* RKHouse.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F032AA710FFBBCD00F35142 /* RKHouse.m */; };
 		3F032AAB10FFBC1F00F35142 /* RKResident.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F032AAA10FFBC1F00F35142 /* RKResident.m */; };
@@ -1598,8 +1598,9 @@
 				3FD12C851379AD64008B996A /* RKRouter.h in Headers */,
 				25A1CB4313840C5400A7D5C9 /* RKParserRegistry.h in Headers */,
 				25A1CA8A137DD33900A7D5C9 /* RKObjectLoader_Internals.h in Headers */,
-				257FB6FF1395D36D003A628E /* RKObjectMapperError.h in Headers */,
 				250F060913E3A1D900FAAFBF /* RKObjectAbstractMapping.h in Headers */,
+				25FB6D5613E4836C00F48969 /* RKObjectPolymorphicMapping.h in Headers */,
+				257FB6FF1395D36D003A628E /* RKObjectMapperError.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1638,7 +1639,6 @@
 				257FB683139582C5003A628E /* NSManagedObject+ActiveRecord.h in Headers */,
 				25A1CA87137C521C00A7D5C9 /* RKManagedObjectThreadSafeInvocation.h in Headers */,
 				257FB7091395DC44003A628E /* RKManagedObjectMappingOperation.h in Headers */,
-				252CF8B213E250730093BBD6 /* RKObjectPolymorphicMapping.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2103,6 +2103,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				25FB6DBD13E4858400F48969 /* RKObjectPolymorphicMapping.m in Sources */,
 				253A08FB1255246500976E89 /* RKObjectLoader.m in Sources */,
 				253A08FD1255246600976E89 /* RKObjectManager.m in Sources */,
 				253A09011255246900976E89 /* RKObjectPropertyInspector.m in Sources */,
@@ -2149,7 +2150,6 @@
 				257FB678139559A4003A628E /* RKManagedObjectMapping.m in Sources */,
 				257FB684139582C5003A628E /* NSManagedObject+ActiveRecord.m in Sources */,
 				257FB70A1395DC44003A628E /* RKManagedObjectMappingOperation.m in Sources */,
-				252CF8B313E250730093BBD6 /* RKObjectPolymorphicMapping.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -283,6 +283,7 @@ typedef enum {
  @see sendObject:method:delegate:block
  - (RKObjectLoader*)postObject:(id<NSObject>)object delegate:(id<RKObjectLoaderDelegate>)delegate block:(void(^)(RKObjectLoader*))block;
  */
+- (RKObjectLoader*)postObject:(id<NSObject>)object delegate:(id<RKObjectLoaderDelegate>)delegate block:(void(^)(RKObjectLoader*))block;
 
 /**
  PUT a remote object instance and yield the object loader to the block before sending
