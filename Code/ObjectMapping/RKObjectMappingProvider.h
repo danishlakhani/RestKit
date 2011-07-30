@@ -7,7 +7,7 @@
 //
 
 #import "RKObjectMapping.h"
-#import "RKDynamicObjectMapping.h"
+#import "RKObjectPolymorphicMapping.h"
 
 /**
  Responsible for providing object mappings to an instance of the object mapper
@@ -114,12 +114,12 @@
 - (RKObjectMapping*)serializationMappingForClass:(Class)objectClass;
 
 /**
- Sets a dynamic object mapping for the specified callback. Dynamic mappings can be used to determine the appropriate
- type of mapping based on the data being mapped
+ Sets a polymorphic mapping for the specified key path. Polymorphic mappings are used to defer the determination
+ of the final object mapping until mapping time. This provides support for mapping individual items within a collection
+ differently and using internal attributes to determine how mapping should procede
  
- @see RKDynamicObjectMapping
+ @see RKObjectPolymorphicMapping
  */
-// TODO: Should we just tag dynamic and concrete mappings with a protocol so we don't need this method???
-- (void)setDynamicMapping:(RKDynamicObjectMapping*)dynamicMapping forKeyPath:(NSString*)keyPath;
+- (void)setPolymorphicMapping:(RKObjectPolymorphicMapping*)dynamicMapping forKeyPath:(NSString*)keyPath;
 
 @end

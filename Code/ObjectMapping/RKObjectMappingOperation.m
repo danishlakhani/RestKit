@@ -22,29 +22,64 @@
 
 extern NSString* const RKObjectMappingNestingAttributeKeyName;
 
+// Temporary home for object equivalancy tests
+BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
+    NSCAssert(sourceValue, @"Expected sourceValue not to be nil");
+    NSCAssert(destinationValue, @"Expected destinationValue not to be nil");
+    
+    SEL comparisonSelector;
+    if ([sourceValue isKindOfClass:[NSString class]]) {
+        comparisonSelector = @selector(isEqualToString:);
+    } else if ([sourceValue isKindOfClass:[NSNumber class]]) {
+        comparisonSelector = @selector(isEqualToNumber:);
+    } else if ([sourceValue isKindOfClass:[NSDate class]]) {
+        comparisonSelector = @selector(isEqualToDate:);
+    } else if ([sourceValue isKindOfClass:[NSArray class]]) {
+        comparisonSelector = @selector(isEqualToArray:);
+    } else if ([sourceValue isKindOfClass:[NSDictionary class]]) {
+        comparisonSelector = @selector(isEqualToDictionary:);
+    } else if ([sourceValue isKindOfClass:[NSSet class]]) {
+        comparisonSelector = @selector(isEqualToSet:);
+    } else {
+        comparisonSelector = @selector(isEqual:);
+    }
+    
+    // Comparison magic using function pointers. See this page for details: http://www.red-sweater.com/blog/320/abusing-objective-c-with-class
+    // Original code courtesy of Greg Parker
+    // This is necessary because isEqualToNumber will return negative integer values that aren't coercable directly to BOOL's without help [sbw]
+    BOOL (*ComparisonSender)(id, SEL, id) = (BOOL (*)(id, SEL, id)) objc_msgSend;
+    return ComparisonSender(sourceValue, comparisonSelector, destinationValue);
+}
+
 @implementation RKObjectMappingOperation
 
 @synthesize sourceObject = _sourceObject;
 @synthesize destinationObject = _destinationObject;
 @synthesize objectMapping = _objectMapping;
 @synthesize delegate = _delegate;
-@synthesize objectFactory = _objectFactory;
 
-+ (RKObjectMappingOperation*)mappingOperationFromObject:(id)sourceObject toObject:(id)destinationObject withObjectMapping:(RKObjectMapping*)objectMapping {
-    return [[[self alloc] initWithSourceObject:sourceObject destinationObject:destinationObject objectMapping:objectMapping] autorelease];
++ (RKObjectMappingOperation*)mappingOperationFromObject:(id)sourceObject toObject:(id)destinationObject withMapping:(RKObjectAbstractMapping*)objectMapping {
+    return [[[self alloc] initWithSourceObject:sourceObject destinationObject:destinationObject mapping:objectMapping] autorelease];
 }
 
-- (id)initWithSourceObject:(id)sourceObject destinationObject:(id)destinationObject objectMapping:(RKObjectMapping*)objectMapping {
+- (id)initWithSourceObject:(id)sourceObject destinationObject:(id)destinationObject mapping:(RKObjectAbstractMapping*)objectMapping {
     NSAssert(sourceObject != nil, @"Cannot perform a mapping operation without a sourceObject object");
     NSAssert(destinationObject != nil, @"Cannot perform a mapping operation without a destinationObject");
-    NSAssert(objectMapping != nil, @"Cannot perform a mapping operation without an object mapping to apply");
+    NSAssert(objectMapping != nil, @"Cannot perform a mapping operation without a mapping");
     
     self = [super init];
     if (self) {
-        _sourceObject = [sourceObject retain];
+        _sourceObject = [sourceObject retain];        
         _destinationObject = [destinationObject retain];
-        _objectMapping = [objectMapping retain];
-    }
+        
+        if ([objectMapping isKindOfClass:[RKObjectPolymorphicMapping class]]) {            
+            _objectMapping = [[(RKObjectPolymorphicMapping*)objectMapping objectMappingForDictionary:_sourceObject] retain];
+            RKLogDebug(@"RKObjectMappingOperation was initialized with a polymorphic mapping. Determined concrete mapping = %@", _objectMapping);
+        } else {
+            _objectMapping = [objectMapping retain];
+        }
+        NSAssert(_objectMapping, @"Cannot perform a mapping operation with an object mapping");
+    }    
     
     return self;
 }
@@ -131,32 +166,8 @@ extern NSString* const RKObjectMappingNestingAttributeKeyName;
     return nil;
 }
 
-- (BOOL)isValue:(id)sourceValue equalToValue:(id)destinationValue {
-    NSAssert(sourceValue, @"Expected sourceValue not to be nil");
-    NSAssert(destinationValue, @"Expected destinationValue not to be nil");
-    
-    SEL comparisonSelector;
-    if ([sourceValue isKindOfClass:[NSString class]]) {
-        comparisonSelector = @selector(isEqualToString:);
-    } else if ([sourceValue isKindOfClass:[NSNumber class]]) {
-        comparisonSelector = @selector(isEqualToNumber:);
-    } else if ([sourceValue isKindOfClass:[NSDate class]]) {
-        comparisonSelector = @selector(isEqualToDate:);
-    } else if ([sourceValue isKindOfClass:[NSArray class]]) {
-        comparisonSelector = @selector(isEqualToArray:);
-    } else if ([sourceValue isKindOfClass:[NSDictionary class]]) {
-        comparisonSelector = @selector(isEqualToDictionary:);
-    } else if ([sourceValue isKindOfClass:[NSSet class]]) {
-        comparisonSelector = @selector(isEqualToSet:);
-    } else {
-        comparisonSelector = @selector(isEqual:);
-    }
-    
-    // Comparison magic using function pointers. See this page for details: http://www.red-sweater.com/blog/320/abusing-objective-c-with-class
-    // Original code courtesy of Greg Parker
-    // This is necessary because isEqualToNumber will return negative integer values that aren't coercable directly to BOOL's without help [sbw]
-    BOOL (*ComparisonSender)(id, SEL, id) = (BOOL (*)(id, SEL, id)) objc_msgSend;
-    return ComparisonSender(sourceValue, comparisonSelector, destinationValue);
+- (BOOL)isValue:(id)sourceValue equalToValue:(id)destinationValue {    
+    return RKObjectIsValueEqualToValue(sourceValue, destinationValue);
 }
 
 - (BOOL)validateValue:(id)value atKeyPath:(NSString*)keyPath {
@@ -303,9 +314,8 @@ extern NSString* const RKObjectMappingNestingAttributeKeyName;
 - (BOOL)mapNestedObject:(id)anObject toObject:(id)anotherObject withMapping:(RKObjectRelationshipMapping*)mapping {
     NSError* error = nil;
     
-    RKObjectMappingOperation* subOperation = [RKObjectMappingOperation mappingOperationFromObject:anObject toObject:anotherObject withObjectMapping:mapping.objectMapping];
+    RKObjectMappingOperation* subOperation = [RKObjectMappingOperation mappingOperationFromObject:anObject toObject:anotherObject withMapping:mapping.objectMapping];
     subOperation.delegate = self.delegate;
-    subOperation.objectFactory = self.objectFactory;
     if (NO == [subOperation performMapping:&error]) {
         RKLogWarning(@"WARNING: Failed mapping nested object: %@", [error localizedDescription]);
     }
@@ -319,6 +329,8 @@ extern NSString* const RKObjectMappingNestingAttributeKeyName;
     
     for (RKObjectRelationshipMapping* mapping in [self relationshipMappings]) {
         id value = [self.sourceObject valueForKeyPath:mapping.sourceKeyPath];
+        
+        // TODO: Need to handle polymorphics here!
         
         if (value == nil || value == [NSNull null] || [value isEqual:[NSNull null]]) {
             RKLogDebug(@"Did not find mappable relationship value keyPath '%@'", mapping.sourceKeyPath);
@@ -339,7 +351,8 @@ extern NSString* const RKObjectMappingNestingAttributeKeyName;
             
             destinationObject = [NSMutableArray arrayWithCapacity:[value count]];
             for (id nestedObject in value) {
-                id mappedObject = [self.objectFactory objectWithMapping:mapping.objectMapping andData:nestedObject];
+                id mappedObject = [mapping.objectMapping mappableObjectForData:nestedObject];
+                // [self.objectFactory objectWithMapping:mapping.objectMapping andData:nestedObject];
                 if ([self mapNestedObject:nestedObject toObject:mappedObject withMapping:mapping]) {
                     [destinationObject addObject:mappedObject];
                 }
@@ -354,8 +367,9 @@ extern NSString* const RKObjectMappingNestingAttributeKeyName;
             // One to one relationship
             RKLogDebug(@"Mapping one to one relationship value at keyPath '%@' to '%@'", mapping.sourceKeyPath, mapping.destinationKeyPath);            
             
-            destinationObject = [self.objectFactory objectWithMapping:mapping.objectMapping andData:value];
-            NSAssert(destinationObject, @"Cannot map a relationship without an object factory to create it...");
+            destinationObject = [mapping.objectMapping mappableObjectForData:value];
+//            destinationObject = [self.objectFactory objectWithMapping:mapping.objectMapping andData:value];
+//            NSAssert(destinationObject, @"Cannot map a relationship without an object factory to create it...");
             if ([self mapNestedObject:value toObject:destinationObject withMapping:mapping]) {
                 appliedMappings = YES;
             }

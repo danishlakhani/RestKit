@@ -128,16 +128,6 @@
 #pragma mark - Subclass Hooks
 
 /**
- Overloaded by RKManagedObjectLoader to provide support for creation
- and find/update of managed object instances
- 
- @protected
- */
-- (id<RKObjectFactory>)createObjectFactory {
-    return nil;
-}
-
-/**
  Overloaded by RKManagedObjectLoader to serialize/deserialize managed objects
  at thread boundaries. 
  
@@ -179,7 +169,7 @@
     }
     
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:parsedData mappingProvider:mappingProvider];
-    mapper.objectFactory = [self createObjectFactory];
+//    mapper.objectFactory = [self createObjectFactory];
     mapper.targetObject = targetObject;
     mapper.delegate = self;
     RKObjectMappingResult* result = [mapper performMapping];

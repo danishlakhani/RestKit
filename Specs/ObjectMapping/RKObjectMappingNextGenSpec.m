@@ -667,7 +667,7 @@
     NSMutableDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:123], @"id", @"Blake Watters", @"name", nil];
     RKExampleUser* user = [RKExampleUser user];
     
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     [operation performMapping:nil];    
     [expectThat(user.name) should:be(@"Blake Watters")];
     [expectThat(user.userID) should:be(123)];    
@@ -684,7 +684,7 @@
     NSMutableDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys:[NSNull null], @"name", nil];
     RKExampleUser* user = [RKExampleUser user];
     
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     BOOL success = [operation performMapping:nil];
     assertThatBool(success, is(equalToBool(YES)));
     assertThat(user.name, is(nilValue()));
@@ -703,7 +703,7 @@
     user.userID = [NSNumber numberWithInt:123];
     
     NSMutableDictionary* dictionary = [NSMutableDictionary dictionary];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:user destinationObject:dictionary objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:user destinationObject:dictionary mapping:mapping];
     BOOL success = [operation performMapping:nil];
     [expectThat(success) should:be(YES)];
     [expectThat([dictionary valueForKey:@"name"]) should:be(@"Blake Watters")];
@@ -721,7 +721,7 @@
     NSMutableDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys:@"blue", @"favorite_color", @"coffee", @"preferred_beverage", nil];
     RKExampleUser* user = [RKExampleUser user];
     
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     BOOL success = [operation performMapping:&error];
     [expectThat(success) should:be(NO)];
@@ -740,7 +740,7 @@
     NSMutableDictionary* dictionary = [NSDictionary dictionaryWithObjectsAndKeys:@"blue", @"favorite_color", @"coffee", @"preferred_beverage", nil];
     RKExampleUser* user = [RKExampleUser user];
     
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     operation.delegate = mockDelegate;
     BOOL success = [operation performMapping:nil];
     [expectThat(success) should:be(NO)];
@@ -759,7 +759,7 @@
     id mockObject = [OCMockObject partialMockForObject:user];
     [[[mockObject expect] andCall:@selector(fakeValidateValue:forKey:error:) onObject:self] validateValue:[OCMArg anyPointer] forKey:OCMOCK_ANY error:[OCMArg anyPointer]];
     
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:mockObject objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:mockObject mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     [expectThat(error) shouldNot:be(nil)];
@@ -775,7 +775,7 @@
     
     NSDictionary* dictionary = RKSpecParseFixture(@"user.json");
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -791,7 +791,7 @@
     
     NSDictionary* dictionary = RKSpecParseFixture(@"user.json");
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -807,7 +807,7 @@
     
     NSDictionary* dictionary = RKSpecParseFixture(@"user.json");
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -822,7 +822,7 @@
     NSDictionary* dictionary = [RKSpecParseFixture(@"user.json") mutableCopy];
     RKExampleUser* user = [RKExampleUser user];
     [dictionary setValue:@"T" forKey:@"is_developer"];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -837,7 +837,7 @@
     NSDictionary* dictionary = [RKSpecParseFixture(@"user.json") mutableCopy];
     RKExampleUser* user = [RKExampleUser user];
     [dictionary setValue:@"f" forKey:@"is_developer"];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -852,7 +852,7 @@
     NSDictionary* dictionary = [RKSpecParseFixture(@"user.json") mutableCopy];
     RKExampleUser* user = [RKExampleUser user];
     [dictionary setValue:@"yes" forKey:@"is_developer"];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -867,7 +867,7 @@
     NSDictionary* dictionary = [RKSpecParseFixture(@"user.json") mutableCopy];
     RKExampleUser* user = [RKExampleUser user];
     [dictionary setValue:@"NO" forKey:@"is_developer"];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -881,7 +881,7 @@
     
     NSDictionary* dictionary = RKSpecParseFixture(@"user.json");
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -895,7 +895,7 @@
     
     NSDictionary* dictionary = RKSpecParseFixture(@"user.json");
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -912,7 +912,7 @@
     
     NSDictionary* dictionary = RKSpecParseFixture(@"user.json");
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -931,7 +931,7 @@
     NSMutableDictionary* dictionary = [RKSpecParseFixture(@"user.json") mutableCopy];
     [dictionary setValue:[NSNumber numberWithInt:[date timeIntervalSince1970]] forKey:@"dateAsNumber"];
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -945,7 +945,7 @@
     
     NSDictionary* dictionary = RKSpecParseFixture(@"user.json");
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -959,7 +959,7 @@
     
     NSDictionary* dictionary = RKSpecParseFixture(@"user.json");
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -974,7 +974,7 @@
     
     NSDictionary* dictionary = RKSpecParseFixture(@"user.json");
     RKExampleUser* user = [RKExampleUser user];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     
@@ -996,7 +996,7 @@
     user.name = @"Blake Watters";
     id mockUser = [OCMockObject partialMockForObject:user];
     [[mockUser reject] setName:OCMOCK_ANY];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
 }
@@ -1012,7 +1012,7 @@
     user.name = nil;
     id mockUser = [OCMockObject partialMockForObject:user];
     [[mockUser reject] setName:OCMOCK_ANY];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
 }
@@ -1028,7 +1028,7 @@
     user.name = @"Blake Watters";
     id mockUser = [OCMockObject partialMockForObject:user];
     [[mockUser expect] setName:nil];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     NSError* error = nil;
     [operation performMapping:&error];
     [mockUser verify];
@@ -1045,7 +1045,7 @@
     user.name = @"Blake Watters";
     id mockUser = [OCMockObject partialMockForObject:user];
     [[mockUser expect] setName:nil];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     id mockMapping = [OCMockObject partialMockForObject:mapping];
     BOOL returnValue = YES;
     [[[mockMapping expect] andReturnValue:OCMOCK_VALUE(returnValue)] shouldSetDefaultValueForMissingAttributes];
@@ -1065,7 +1065,7 @@
     user.name = @"Blake Watters";
     id mockUser = [OCMockObject partialMockForObject:user];
     [[mockUser reject] setName:nil];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user objectMapping:mapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:user mapping:mapping];
     id mockMapping = [OCMockObject partialMockForObject:mapping];
     BOOL returnValue = NO;
     [[[mockMapping expect] andReturnValue:OCMOCK_VALUE(returnValue)] shouldSetDefaultValueForMissingAttributes];
@@ -1216,7 +1216,7 @@
     id mockMapping = [OCMockObject partialMockForObject:userMapping];
     BOOL returnValue = YES;
     [[[mockMapping expect] andReturnValue:OCMOCK_VALUE(returnValue)] setNilForMissingRelationships];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:mockUser objectMapping:mockMapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:mockUser mapping:mockMapping];
     
     NSError* error = nil;
     [operation performMapping:&error];
@@ -1243,7 +1243,7 @@
     id mockMapping = [OCMockObject partialMockForObject:userMapping];
     BOOL returnValue = YES;
     [[[mockMapping expect] andReturnValue:OCMOCK_VALUE(returnValue)] setNilForMissingRelationships];
-    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:mockUser objectMapping:mockMapping];
+    RKObjectMappingOperation* operation = [[RKObjectMappingOperation alloc] initWithSourceObject:dictionary destinationObject:mockUser mapping:mockMapping];
     
     NSError* error = nil;
     [operation performMapping:&error];
@@ -1291,14 +1291,14 @@
     assertThat([mappingProvider objectMappingsForClass:[RKExampleUser class]], is(equalTo([NSArray arrayWithObjects:firstMapping, secondMapping, thirdMapping, nil])));
 }
 
-#pragma mark - RKDynamicObjectMapping
+#pragma mark - RKObjectPolymorphicMapping
 
 - (void)itShouldMapASingleObjectDynamically {
     RKObjectMapping* boyMapping = [RKObjectMapping mappingForClass:[Boy class]];
     [boyMapping mapAttributes:@"name", nil];
     RKObjectMapping* girlMapping = [RKObjectMapping mappingForClass:[Girl class]];
     [girlMapping mapAttributes:@"name", nil];
-    RKDynamicObjectMapping* dynamicMapping = [RKDynamicObjectMapping dynamicMapping];
+    RKObjectPolymorphicMapping* dynamicMapping = [RKObjectPolymorphicMapping polymorphicMapping];
     dynamicMapping.delegateBlock = ^ RKObjectMapping* (id mappableData) {
         if ([[mappableData valueForKey:@"type"] isEqualToString:@"Boy"]) {
             return boyMapping;
@@ -1310,22 +1310,59 @@
     };
     
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setDynamicMapping:dynamicMapping forKeyPath:@""];
+    [provider setPolymorphicMapping:dynamicMapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
     
     id userInfo = RKSpecParseFixture(@"boy.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
-    RKExampleUser* user = [[mapper performMapping] asObject];
+    Boy* user = [[mapper performMapping] asObject];
     [expectThat([user isKindOfClass:[Boy class]]) should:be(YES)];
     [expectThat(user.name) should:be(@"Blake Watters")];
 }
 
 - (void)itShouldMapASingleObjectDynamicallyWithADeclarativeMatcher {
+    RKObjectMapping* boyMapping = [RKObjectMapping mappingForClass:[Boy class]];
+    [boyMapping mapAttributes:@"name", nil];
+    RKObjectMapping* girlMapping = [RKObjectMapping mappingForClass:[Girl class]];
+    [girlMapping mapAttributes:@"name", nil];
+    RKObjectPolymorphicMapping* dynamicMapping = [RKObjectPolymorphicMapping polymorphicMapping];
+    [dynamicMapping setObjectMapping:boyMapping whenValueOfKey:@"type" isEqualTo:@"Boy"];
+    [dynamicMapping setObjectMapping:girlMapping whenValueOfKey:@"type" isEqualTo:@"Girl"];
     
+    RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
+    [provider setPolymorphicMapping:dynamicMapping forKeyPath:@""];
+    id mockProvider = [OCMockObject partialMockForObject:provider];
+    
+    id userInfo = RKSpecParseFixture(@"boy.json");
+    RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
+    Boy* user = [[mapper performMapping] asObject];
+    [expectThat([user isKindOfClass:[Boy class]]) should:be(YES)];
+    [expectThat(user.name) should:be(@"Blake Watters")];
 }
 
-- (void)itShouldACollectionOfObjectsDynamically {
+- (void)itShouldACollectionOfObjectsPolymorphically {
+    RKObjectMapping* boyMapping = [RKObjectMapping mappingForClass:[Boy class]];
+    [boyMapping mapAttributes:@"name", nil];
+    RKObjectMapping* girlMapping = [RKObjectMapping mappingForClass:[Girl class]];
+    [girlMapping mapAttributes:@"name", nil];
+    RKObjectPolymorphicMapping* dynamicMapping = [RKObjectPolymorphicMapping polymorphicMapping];
+    [dynamicMapping setObjectMapping:boyMapping whenValueOfKey:@"type" isEqualTo:@"Boy"];
+    [dynamicMapping setObjectMapping:girlMapping whenValueOfKey:@"type" isEqualTo:@"Girl"];
     
+    RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
+    [provider setPolymorphicMapping:dynamicMapping forKeyPath:@""];
+    id mockProvider = [OCMockObject partialMockForObject:provider];
+    
+    id userInfo = RKSpecParseFixture(@"mixed.json");
+    RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
+    NSArray* objects = [[mapper performMapping] asCollection];
+    assertThat(objects, hasCountOf(2));
+    assertThat([objects objectAtIndex:0], is(instanceOf([Boy class])));
+    assertThat([objects objectAtIndex:1], is(instanceOf([Girl class])));
+    Boy* boy = [objects objectAtIndex:0];
+    Girl* girl = [objects objectAtIndex:1];
+    [expectThat(boy.name) should:be(@"Blake Watters")];
+    [expectThat(girl.name) should:be(@"Sarah")];
 }
 
 @end

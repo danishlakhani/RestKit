@@ -80,7 +80,7 @@
     return ([objectMappings count] > 0) ? [objectMappings objectAtIndex:0] : nil;
 }
 
-- (void)setDynamicMapping:(RKDynamicObjectMapping*)dynamicMapping forKeyPath:(NSString*)keyPath {
+- (void)setPolymorphicMapping:(RKObjectPolymorphicMapping*)dynamicMapping forKeyPath:(NSString*)keyPath {
     [_objectMappingsByKeyPath setValue:dynamicMapping forKey:keyPath];
 }
 

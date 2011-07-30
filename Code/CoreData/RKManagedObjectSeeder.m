@@ -12,7 +12,6 @@
 
 #import "RKManagedObjectSeeder.h"
 #import "RKManagedObjectStore.h"
-#import "RKManagedObjectFactory.h"
 #import "../ObjectMapping/RKParserRegistry.h"
 #import "RKLog.h"
 
@@ -120,7 +119,6 @@ NSString* const RKDefaultSeedDatabaseFileName = @"RKSeedDatabase.sqlite";
         }
         
         RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:parsedData mappingProvider:mappingProvider];
-        mapper.objectFactory = [RKManagedObjectFactory objectFactoryWithObjectStore:_manager.objectStore];
         RKObjectMappingResult* result = [mapper performMapping];
         if (result == nil) {
             RKLogError(@"Database seeding from file '%@' failed due to object mapping errors: %@", fileName, mapper.errors);

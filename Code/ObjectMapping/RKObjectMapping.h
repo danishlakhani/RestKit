@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "RKObjectAbstractMapping.h"
 #import "RKObjectAttributeMapping.h"
 #import "RKObjectRelationshipMapping.h"
 
@@ -30,7 +31,7 @@ relationship. Relationships are processed using an object mapping as well.
  Instances of RKObjectMapping are used to configure RKObjectMappingOperation instances, which actually
  perform the mapping work. Both object loading and serialization are defined in terms of object mappings.
  */
-@interface RKObjectMapping : NSObject {
+@interface RKObjectMapping : RKObjectAbstractMapping {
     Class _objectClass;
     NSMutableArray* _mappings;
     NSMutableArray* _dateFormatStrings;

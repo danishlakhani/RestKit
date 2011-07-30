@@ -257,7 +257,7 @@
     RKObjectMapperSpecModel* human = [[RKObjectMapperSpecModel new] autorelease];
     human.name = @"Blake Watters";
     human.age = [NSNumber numberWithInt:28];
-    RKObjectLoader* loader = [objectManager deleteObject:human delegate:responseLoader block:^(RKObjectLoader* loader) {
+    [objectManager deleteObject:human delegate:responseLoader block:^(RKObjectLoader* loader) {
         loader.resourcePath = @"/humans/1";
     }];
     [responseLoader waitForResponse];
@@ -274,7 +274,7 @@
     RKObjectMapperSpecModel* human = [[RKObjectMapperSpecModel new] autorelease];
     human.name = @"Blake Watters";
     human.age = [NSNumber numberWithInt:28];
-    RKObjectLoader* loader = [objectManager deleteObject:human delegate:responseLoader block:^(RKObjectLoader* loader) {
+    [objectManager deleteObject:human delegate:responseLoader block:^(RKObjectLoader* loader) {
         loader.resourcePath = @"/humans/1";
     }];
     [responseLoader waitForResponse];
@@ -291,7 +291,7 @@
     RKObjectMapperSpecModel* human = [[RKObjectMapperSpecModel new] autorelease];
     human.name = @"Blake Watters";
     human.age = [NSNumber numberWithInt:28];
-    RKObjectLoader* loader = [objectManager deleteObject:human delegate:responseLoader block:^(RKObjectLoader* loader) {
+    [objectManager deleteObject:human delegate:responseLoader block:^(RKObjectLoader* loader) {
         loader.resourcePath = @"/humans/1";
         loader.objectMapping = mapping;
     }];
