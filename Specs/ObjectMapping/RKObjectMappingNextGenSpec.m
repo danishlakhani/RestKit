@@ -17,7 +17,7 @@
 #import "RKObjectMapper.h"
 #import "RKObjectMapper_Private.h"
 #import "RKObjectMapperError.h"
-#import "RKDynamicMappingModels.h"
+#import "RKPolymorphicMappingModels.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1316,8 +1316,8 @@
     id userInfo = RKSpecParseFixture(@"boy.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
     Boy* user = [[mapper performMapping] asObject];
-    [expectThat([user isKindOfClass:[Boy class]]) should:be(YES)];
-    [expectThat(user.name) should:be(@"Blake Watters")];
+    assertThat(user, is(instanceOf([Boy class])));
+    assertThat(user.name, is(equalTo(@"Blake Watters")));
 }
 
 - (void)itShouldMapASingleObjectDynamicallyWithADeclarativeMatcher {
@@ -1336,8 +1336,8 @@
     id userInfo = RKSpecParseFixture(@"boy.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
     Boy* user = [[mapper performMapping] asObject];
-    [expectThat([user isKindOfClass:[Boy class]]) should:be(YES)];
-    [expectThat(user.name) should:be(@"Blake Watters")];
+    assertThat(user, is(instanceOf([Boy class])));
+    assertThat(user.name, is(equalTo(@"Blake Watters")));
 }
 
 - (void)itShouldACollectionOfObjectsPolymorphically {
@@ -1361,8 +1361,36 @@
     assertThat([objects objectAtIndex:1], is(instanceOf([Girl class])));
     Boy* boy = [objects objectAtIndex:0];
     Girl* girl = [objects objectAtIndex:1];
-    [expectThat(boy.name) should:be(@"Blake Watters")];
-    [expectThat(girl.name) should:be(@"Sarah")];
+    assertThat(boy.name, is(equalTo(@"Blake Watters")));
+    assertThat(girl.name, is(equalTo(@"Sarah")));
+}
+
+- (void)itShouldMapAPolymorphicRelationship {
+    RKObjectMapping* boyMapping = [RKObjectMapping mappingForClass:[Boy class]];
+    [boyMapping mapAttributes:@"name", nil];
+    RKObjectMapping* girlMapping = [RKObjectMapping mappingForClass:[Girl class]];
+    [girlMapping mapAttributes:@"name", nil];
+    RKObjectPolymorphicMapping* dynamicMapping = [RKObjectPolymorphicMapping polymorphicMapping];
+    [dynamicMapping setObjectMapping:boyMapping whenValueOfKey:@"type" isEqualTo:@"Boy"];
+    [dynamicMapping setObjectMapping:girlMapping whenValueOfKey:@"type" isEqualTo:@"Girl"];
+    [boyMapping mapKeyPath:@"friends" toRelationship:@"friends" withObjectMapping:dynamicMapping];
+    
+    RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
+    [provider setPolymorphicMapping:dynamicMapping forKeyPath:@""];
+    id mockProvider = [OCMockObject partialMockForObject:provider];
+    
+    id userInfo = RKSpecParseFixture(@"friends.json");
+    RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
+    Boy* blake = [[mapper performMapping] asObject];
+    NSArray* friends = blake.friends;
+    
+    assertThat(friends, hasCountOf(2));
+    assertThat([friends objectAtIndex:0], is(instanceOf([Boy class])));
+    assertThat([friends objectAtIndex:1], is(instanceOf([Girl class])));
+    Boy* boy = [friends objectAtIndex:0];
+    Girl* girl = [friends objectAtIndex:1];
+    assertThat(boy.name, is(equalTo(@"John Doe")));
+    assertThat(girl.name, is(equalTo(@"Jane Doe")));
 }
 
 @end

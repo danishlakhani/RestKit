@@ -185,7 +185,6 @@
     RKObjectMappingOperation* operation = [RKObjectMappingOperation mappingOperationFromObject:mappableObject 
                                                                                       toObject:destinationObject 
                                                                                    withMapping:mapping];
-//    operation.objectFactory = self;
     BOOL success = [operation performMapping:&error];    
     if (success) {
         if ([self.delegate respondsToSelector:@selector(objectMapper:didMapFromObject:toObject:atKeyPath:usingMapping:)]) {
@@ -274,8 +273,6 @@
     
     return [RKObjectMappingResult mappingResultWithDictionary:results];
 }
-
-#pragma - RKObjectFactory methods
 
 - (id)objectWithMapping:(RKObjectAbstractMapping*)objectMapping andData:(id)mappableData {
     NSAssert(! [objectMapping isMemberOfClass:[RKObjectAbstractMapping class]], @"Expected a concrete subclass of RKObjectAbstractMapping");

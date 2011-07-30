@@ -241,8 +241,6 @@ NSString* const RKObjectMappingNestingAttributeKeyName = @"<RK_NESTING_ATTRIBUTE
     return nil;
 }
 
-#pragma - RKObjectFactory methods
-
 - (id)mappableObjectForData:(id)mappableData {
     return [[self.objectClass new] autorelease];
 }

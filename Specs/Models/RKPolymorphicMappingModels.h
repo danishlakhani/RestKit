@@ -1,5 +1,5 @@
 //
-//  RKDynamicMappingModels.h
+//  RKPolymorphicMappingModels.h
 //  RestKit
 //
 //  Created by Blake Watters on 7/28/11.
@@ -10,6 +10,7 @@
 
 @interface Person : NSObject
 @property (nonatomic, retain) NSString* name;
+@property (nonatomic, retain) NSArray* friends;
 @end
 
 @interface Boy : Person

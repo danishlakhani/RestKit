@@ -330,8 +330,6 @@ BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
     for (RKObjectRelationshipMapping* mapping in [self relationshipMappings]) {
         id value = [self.sourceObject valueForKeyPath:mapping.sourceKeyPath];
         
-        // TODO: Need to handle polymorphics here!
-        
         if (value == nil || value == [NSNull null] || [value isEqual:[NSNull null]]) {
             RKLogDebug(@"Did not find mappable relationship value keyPath '%@'", mapping.sourceKeyPath);
             
@@ -351,8 +349,11 @@ BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
             
             destinationObject = [NSMutableArray arrayWithCapacity:[value count]];
             for (id nestedObject in value) {
-                id mappedObject = [mapping.objectMapping mappableObjectForData:nestedObject];
-                // [self.objectFactory objectWithMapping:mapping.objectMapping andData:nestedObject];
+                RKObjectMapping* objectMapping = mapping.objectMapping;
+                if ([objectMapping isKindOfClass:[RKObjectPolymorphicMapping class]]) {
+                    objectMapping = [objectMapping objectMappingForDictionary:nestedObject];
+                }
+                id mappedObject = [objectMapping mappableObjectForData:nestedObject];
                 if ([self mapNestedObject:nestedObject toObject:mappedObject withMapping:mapping]) {
                     [destinationObject addObject:mappedObject];
                 }
@@ -367,9 +368,11 @@ BOOL RKObjectIsValueEqualToValue(id sourceValue, id destinationValue) {
             // One to one relationship
             RKLogDebug(@"Mapping one to one relationship value at keyPath '%@' to '%@'", mapping.sourceKeyPath, mapping.destinationKeyPath);            
             
-            destinationObject = [mapping.objectMapping mappableObjectForData:value];
-//            destinationObject = [self.objectFactory objectWithMapping:mapping.objectMapping andData:value];
-//            NSAssert(destinationObject, @"Cannot map a relationship without an object factory to create it...");
+            RKObjectMapping* objectMapping = mapping.objectMapping;
+            if ([objectMapping isKindOfClass:[RKObjectPolymorphicMapping class]]) {
+                objectMapping = [objectMapping objectMappingForDictionary:value];
+            }
+            destinationObject = [objectMapping mappableObjectForData:value];
             if ([self mapNestedObject:value toObject:destinationObject withMapping:mapping]) {
                 appliedMappings = YES;
             }

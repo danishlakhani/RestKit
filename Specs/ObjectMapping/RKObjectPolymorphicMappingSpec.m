@@ -8,7 +8,7 @@
 
 #import "RKSpecEnvironment.h"
 #import "RKObjectPolymorphicMapping.h"
-#import "RKDynamicMappingModels.h"
+#import "RKPolymorphicMappingModels.h"
 
 @interface RKObjectPolymorphicMappingSpec : RKSpec <RKObjectPolymorphicMappingDelegate>
 
