@@ -214,7 +214,7 @@
     // Perform the mapping
     BOOL foundMappable = NO;
     NSMutableDictionary* results = [NSMutableDictionary dictionary];
-    NSDictionary* keyPathsAndObjectMappings = [self.mappingProvider objectMappingsByKeyPath];
+    NSDictionary* keyPathsAndObjectMappings = [self.mappingProvider mappingsByKeyPath];
     for (NSString* keyPath in keyPathsAndObjectMappings) {
         id mappingResult;
         id mappableValue;
@@ -240,16 +240,16 @@
         
         // Found something to map
         foundMappable = YES;
-        RKObjectMapping* objectMapping = [keyPathsAndObjectMappings objectForKey:keyPath];
+        RKObjectAbstractMapping* mapping = [keyPathsAndObjectMappings objectForKey:keyPath];
         if ([self.delegate respondsToSelector:@selector(objectMapper:didFindMappableObject:atKeyPath:withMapping:)]) {
-            [self.delegate objectMapper:self didFindMappableObject:mappableValue atKeyPath:keyPath withMapping:objectMapping];
+            [self.delegate objectMapper:self didFindMappableObject:mappableValue atKeyPath:keyPath withMapping:mapping];
         }
-        if (objectMapping.forceCollectionMapping || [mappableValue isKindOfClass:[NSArray class]] || [mappableValue isKindOfClass:[NSSet class]]) {
+        if (mapping.forceCollectionMapping || [mappableValue isKindOfClass:[NSArray class]] || [mappableValue isKindOfClass:[NSSet class]]) {
             RKLogDebug(@"Found mappable collection at keyPath '%@': %@", keyPath, mappableValue);
-            mappingResult = [self mapCollection:mappableValue atKeyPath:keyPath usingMapping:objectMapping];
+            mappingResult = [self mapCollection:mappableValue atKeyPath:keyPath usingMapping:mapping];
         } else {
             RKLogDebug(@"Found mappable data at keyPath '%@': %@", keyPath, mappableValue);
-            mappingResult = [self mapObject:mappableValue atKeyPath:keyPath usingMapping:objectMapping];
+            mappingResult = [self mapObject:mappableValue atKeyPath:keyPath usingMapping:mapping];
         }
         
         if (mappingResult) {

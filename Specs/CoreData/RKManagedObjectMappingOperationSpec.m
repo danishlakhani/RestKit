@@ -47,7 +47,7 @@
     RKManagedObjectMapping* humanMapping = [RKManagedObjectMapping mappingForClass:[RKHuman class]];
     humanMapping.primaryKeyAttribute = @"railsID";
     [humanMapping mapAttributes:@"name", @"favoriteCatID", nil];
-    [humanMapping hasOne:@"favoriteCat" withObjectMapping:catMapping];
+    [humanMapping hasOne:@"favoriteCat" withMapping:catMapping];
     [humanMapping connectRelationship:@"favoriteCat" withObjectForPrimaryKeyAttribute:@"favoriteCatID"];
     
     // Create a cat to connect

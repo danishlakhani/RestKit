@@ -26,7 +26,7 @@
 - (void)objectMapperWillBeginMapping:(RKObjectMapper*)objectMapper;
 - (void)objectMapperDidFinishMapping:(RKObjectMapper*)objectMapper;
 - (void)objectMapper:(RKObjectMapper*)objectMapper didAddError:(NSError*)error;
-- (void)objectMapper:(RKObjectMapper*)objectMapper didFindMappableObject:(id)object atKeyPath:(NSString*)keyPath withMapping:(RKObjectMapping*)mapping;
+- (void)objectMapper:(RKObjectMapper*)objectMapper didFindMappableObject:(id)object atKeyPath:(NSString*)keyPath withMapping:(RKObjectAbstractMapping*)mapping;
 - (void)objectMapper:(RKObjectMapper*)objectMapper didNotFindMappableObjectAtKeyPath:(NSString*)keyPath;
 
 - (void)objectMapper:(RKObjectMapper*)objectMapper willMapFromObject:(id)sourceObject toObject:(id)destinationObject atKeyPath:(NSString*)keyPath usingMapping:(RKObjectAbstractMapping*)objectMapping;

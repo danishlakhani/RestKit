@@ -180,7 +180,7 @@
 
 - (void)itShouldAddMappingsToRelationshipMappings {
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
-    RKObjectRelationshipMapping* idMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"id" toKeyPath:@"userID" objectMapping:nil];
+    RKObjectRelationshipMapping* idMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"id" toKeyPath:@"userID" withMapping:nil];
     [mapping addRelationshipMapping:idMapping];
     [expectThat([mapping.mappings containsObject:idMapping]) should:be(YES)];
     [expectThat([mapping.relationshipMappings containsObject:idMapping]) should:be(YES)];
@@ -197,7 +197,7 @@
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
     RKObjectMapping* anotherMapping = [RKObjectMapping mappingForClass:[NSDictionary class]];
     assertThat([mapping mappingForKeyPath:@"another"], is(nilValue()));
-    [mapping mapRelationship:@"another" withObjectMapping:anotherMapping];
+    [mapping mapRelationship:@"another" withMapping:anotherMapping];
     assertThat([mapping mappingForKeyPath:@"another"], isNot(nilValue()));
 }
 
@@ -233,7 +233,7 @@
     [mapping mapAttributes:@"city", @"state", @"zip", nil];
     RKObjectMapping* otherMapping = [RKObjectMapping mappingForClass:[RKSpecAddress class]];
     [otherMapping mapAttributes:@"street", nil];
-    [mapping mapRelationship:@"address" withObjectMapping:otherMapping];
+    [mapping mapRelationship:@"address" withMapping:otherMapping];
     RKObjectMapping* inverse = [mapping inverseMapping];
     assertThat(inverse.objectClass, is(equalTo([NSMutableDictionary class])));
     assertThat([inverse mappingForKeyPath:@"firstName"], isNot(nilValue()));
@@ -248,7 +248,7 @@
 
 - (void)itShouldLetYouRetrieveMappingsByRelationship {
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
-    RKObjectRelationshipMapping* relationshipMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"friend" toKeyPath:@"friendRelationship" objectMapping:mapping];
+    RKObjectRelationshipMapping* relationshipMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"friend" toKeyPath:@"friendRelationship" withMapping:mapping];
     [mapping addRelationshipMapping:relationshipMapping];
     assertThat([mapping mappingForRelationship:@"friendRelationship"], is(equalTo(relationshipMapping)));
 }
@@ -291,7 +291,7 @@
 - (void)itShouldDetermineTheObjectMappingByConsultingTheMappingProviderWhenThereIsATargetObject {
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
         
     id userInfo = RKSpecParseFixture(@"user.json");
@@ -305,7 +305,7 @@
 - (void)itShouldAddAnErrorWhenTheKeyPathMappingAndObjectClassDoNotAgree {
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
     
     id userInfo = RKSpecParseFixture(@"user.json");
@@ -323,7 +323,7 @@
     [mapping addAttributeMapping:nameMapping];
     
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
     
     id userInfo = RKSpecParseFixture(@"user.json");
@@ -344,7 +344,7 @@
     [mapping addAttributeMapping:nameMapping];
     
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
     
     id userInfo = RKSpecParseFixture(@"user.json");
@@ -356,9 +356,9 @@
 - (void)itShouldDetermineTheMappingClassForAKeyPathByConsultingTheMappingProviderWhenMappingADictionaryWithoutATargetObject {
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];        
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
-    [[mockProvider expect] objectMappingsByKeyPath];
+    [[mockProvider expect] mappingsByKeyPath];
         
     id userInfo = RKSpecParseFixture(@"user.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:mockProvider];
@@ -374,7 +374,7 @@
     [mapping addAttributeMapping:nameMapping];
     
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
     
     id userInfo = RKSpecParseFixture(@"user.json");
@@ -391,7 +391,7 @@
     RKObjectAttributeMapping* nameMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"name" toKeyPath:@"name"];
     [mapping addAttributeMapping:nameMapping];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     
     id userInfo = RKSpecParseFixture(@"users.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -411,7 +411,7 @@
     RKObjectAttributeMapping* idMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"(name).id" toKeyPath:@"userID"];
     [mapping addAttributeMapping:idMapping];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@"users"];
+    [provider setMapping:mapping forKeyPath:@"users"];
     
     id userInfo = RKSpecParseFixture(@"DynamicKeys.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -434,9 +434,9 @@
     
     RKObjectMapping* addressMapping = [RKObjectMapping mappingForClass:[RKSpecAddress class]];
     [addressMapping mapAttributes:@"city", @"state", nil];
-    [mapping mapKeyPath:@"(name).address" toRelationship:@"address" withObjectMapping:addressMapping];
+    [mapping mapKeyPath:@"(name).address" toRelationship:@"address" withMapping:addressMapping];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@"users"];
+    [provider setMapping:mapping forKeyPath:@"users"];
     
     id userInfo = RKSpecParseFixture(@"DynamicKeysWithRelationship.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -461,7 +461,7 @@
     RKObjectAttributeMapping* nameMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"name" toKeyPath:@"name"];
     [mapping addAttributeMapping:nameMapping];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     
     RKExampleUser* user = [RKExampleUser user];
     user.name = @"Blake Watters";
@@ -481,7 +481,7 @@
     RKObjectAttributeMapping* nameMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"name" toKeyPath:@"name"];
     [mapping addAttributeMapping:nameMapping];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@"user"];
+    [provider setMapping:mapping forKeyPath:@"user"];
     
     id userInfo = RKSpecParseFixture(@"nested_user.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -501,7 +501,7 @@
     RKObjectAttributeMapping* nameMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"name" toKeyPath:@"name"];
     [mapping addAttributeMapping:nameMapping];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     
     id userInfo = RKSpecParseFixture(@"users.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -535,7 +535,7 @@
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(RKObjectMapperDelegate)];
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     
     id userInfo = RKSpecParseFixture(@"users.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -549,7 +549,7 @@
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(RKObjectMapperDelegate)];
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     
     id userInfo = RKSpecParseFixture(@"users.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -564,7 +564,7 @@
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(RKObjectMapperDelegate)];
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     
     id userInfo = RKSpecParseFixture(@"user.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -577,7 +577,7 @@
 - (void)itShouldInformTheDelegateWhenCheckingForObjectMappingForKeyPathIsNotSuccessful {
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
-    [provider setObjectMapping:mapping forKeyPath:@"users"];
+    [provider setMapping:mapping forKeyPath:@"users"];
     
     id userInfo = RKSpecParseFixture(@"user.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -603,7 +603,7 @@
 - (void)itShouldNotifyTheDelegateWhenItWillMapAnObject {
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKExampleUser class]];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(RKObjectMapperDelegate)];
     
     id userInfo = RKSpecParseFixture(@"user.json");
@@ -620,7 +620,7 @@
     RKObjectAttributeMapping* nameMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"name" toKeyPath:@"name"];
     [mapping addAttributeMapping:nameMapping];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     
     id userInfo = RKSpecParseFixture(@"user.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -640,7 +640,7 @@
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:NSClassFromString(@"OCPartialMockObject")];
     [mapping mapAttributes:@"name", nil];
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setObjectMapping:mapping forKeyPath:@""];
+    [provider setMapping:mapping forKeyPath:@""];
     
     id userInfo = RKSpecParseFixture(@"user.json");
     RKObjectMapper* mapper = [RKObjectMapper mapperWithObject:userInfo mappingProvider:provider];
@@ -1084,7 +1084,7 @@
     RKObjectAttributeMapping* cityMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"city" toKeyPath:@"city"];
     [addressMapping addAttributeMapping:cityMapping];
     
-    RKObjectRelationshipMapping* hasOneMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"address" toKeyPath:@"address" objectMapping:addressMapping];
+    RKObjectRelationshipMapping* hasOneMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"address" toKeyPath:@"address" withMapping:addressMapping];
     [userMapping addRelationshipMapping:hasOneMapping];
     
     RKObjectMapper* mapper = [RKObjectMapper new];
@@ -1102,7 +1102,7 @@
     RKObjectAttributeMapping* nameMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"name" toKeyPath:@"name"];
     [userMapping addAttributeMapping:nameMapping];
     
-    RKObjectRelationshipMapping* hasManyMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"friends" toKeyPath:@"friends" objectMapping:userMapping];
+    RKObjectRelationshipMapping* hasManyMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"friends" toKeyPath:@"friends" withMapping:userMapping];
     [userMapping addRelationshipMapping:hasManyMapping];
     
     RKObjectMapper* mapper = [RKObjectMapper new];
@@ -1123,7 +1123,7 @@
     RKObjectAttributeMapping* nameMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"name" toKeyPath:@"name"];
     [userMapping addAttributeMapping:nameMapping];
     
-    RKObjectRelationshipMapping* hasManyMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"friends" toKeyPath:@"friendsSet" objectMapping:userMapping];
+    RKObjectRelationshipMapping* hasManyMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"friends" toKeyPath:@"friendsSet" withMapping:userMapping];
     [userMapping addRelationshipMapping:hasManyMapping];
     
     RKObjectMapper* mapper = [RKObjectMapper new];
@@ -1155,7 +1155,7 @@
     RKObjectAttributeMapping* idMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"id" toKeyPath:@"addressID"];
     [addressMapping addAttributeMapping:idMapping];
     
-    RKObjectRelationshipMapping* hasOneMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"address" toKeyPath:@"address" objectMapping:addressMapping];
+    RKObjectRelationshipMapping* hasOneMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"address" toKeyPath:@"address" withMapping:addressMapping];
     [userMapping addRelationshipMapping:hasOneMapping];
     
     RKObjectMapper* mapper = [RKObjectMapper new];
@@ -1171,7 +1171,7 @@
     [userMapping addAttributeMapping:idMapping];
     [userMapping addAttributeMapping:nameMapping];
     
-    RKObjectRelationshipMapping* hasManyMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"friends" toKeyPath:@"friends" objectMapping:userMapping];
+    RKObjectRelationshipMapping* hasManyMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"friends" toKeyPath:@"friends" withMapping:userMapping];
     [userMapping addRelationshipMapping:hasManyMapping];
     
     RKObjectMapper* mapper = [RKObjectMapper new];
@@ -1208,7 +1208,7 @@
     RKObjectMapping* addressMapping = [RKObjectMapping mappingForClass:[RKSpecAddress class]];
     RKObjectAttributeMapping* idMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"id" toKeyPath:@"addressID"];
     [addressMapping addAttributeMapping:idMapping];
-    RKObjectRelationshipMapping* relationshipMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"address" toKeyPath:@"address" objectMapping:addressMapping];
+    RKObjectRelationshipMapping* relationshipMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"address" toKeyPath:@"address" withMapping:addressMapping];
     [userMapping addRelationshipMapping:relationshipMapping];
     
     NSMutableDictionary* dictionary = [RKSpecParseFixture(@"user.json") mutableCopy];
@@ -1235,7 +1235,7 @@
     RKObjectMapping* addressMapping = [RKObjectMapping mappingForClass:[RKSpecAddress class]];
     RKObjectAttributeMapping* idMapping = [RKObjectAttributeMapping mappingFromKeyPath:@"id" toKeyPath:@"addressID"];
     [addressMapping addAttributeMapping:idMapping];
-    RKObjectRelationshipMapping* relationshipMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"address" toKeyPath:@"address" objectMapping:addressMapping];
+    RKObjectRelationshipMapping* relationshipMapping = [RKObjectRelationshipMapping mappingFromKeyPath:@"address" toKeyPath:@"address" withMapping:addressMapping];
     [userMapping addRelationshipMapping:relationshipMapping];
     
     NSMutableDictionary* dictionary = [RKSpecParseFixture(@"user.json") mutableCopy];
@@ -1287,7 +1287,7 @@
     RKObjectMappingProvider* mappingProvider = [[RKObjectMappingProvider new] autorelease];
     [mappingProvider addObjectMapping:firstMapping];
     [mappingProvider addObjectMapping:secondMapping];
-    [mappingProvider setObjectMapping:thirdMapping forKeyPath:@"third"];
+    [mappingProvider setMapping:thirdMapping forKeyPath:@"third"];
     assertThat([mappingProvider objectMappingsForClass:[RKExampleUser class]], is(equalTo([NSArray arrayWithObjects:firstMapping, secondMapping, thirdMapping, nil])));
 }
 
@@ -1310,7 +1310,7 @@
     };
     
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setPolymorphicMapping:dynamicMapping forKeyPath:@""];
+    [provider setMapping:dynamicMapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
     
     id userInfo = RKSpecParseFixture(@"boy.json");
@@ -1330,7 +1330,7 @@
     [dynamicMapping setObjectMapping:girlMapping whenValueOfKey:@"type" isEqualTo:@"Girl"];
     
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setPolymorphicMapping:dynamicMapping forKeyPath:@""];
+    [provider setMapping:dynamicMapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
     
     id userInfo = RKSpecParseFixture(@"boy.json");
@@ -1350,7 +1350,7 @@
     [dynamicMapping setObjectMapping:girlMapping whenValueOfKey:@"type" isEqualTo:@"Girl"];
     
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setPolymorphicMapping:dynamicMapping forKeyPath:@""];
+    [provider setMapping:dynamicMapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
     
     id userInfo = RKSpecParseFixture(@"mixed.json");
@@ -1373,10 +1373,10 @@
     RKObjectPolymorphicMapping* dynamicMapping = [RKObjectPolymorphicMapping polymorphicMapping];
     [dynamicMapping setObjectMapping:boyMapping whenValueOfKey:@"type" isEqualTo:@"Boy"];
     [dynamicMapping setObjectMapping:girlMapping whenValueOfKey:@"type" isEqualTo:@"Girl"];
-    [boyMapping mapKeyPath:@"friends" toRelationship:@"friends" withObjectMapping:dynamicMapping];
+    [boyMapping mapKeyPath:@"friends" toRelationship:@"friends" withMapping:dynamicMapping];
     
     RKObjectMappingProvider* provider = [[RKObjectMappingProvider new] autorelease];
-    [provider setPolymorphicMapping:dynamicMapping forKeyPath:@""];
+    [provider setMapping:dynamicMapping forKeyPath:@""];
     id mockProvider = [OCMockObject partialMockForObject:provider];
     
     id userInfo = RKSpecParseFixture(@"friends.json");

@@ -197,7 +197,7 @@
         NSString* rootKeyPath = self.objectMapping.rootKeyPath ? self.objectMapping.rootKeyPath : @"";
         RKLogDebug(@"Found directly configured object mapping, creating temporary mapping provider %@", (rootKeyPath ? @"for keyPath '%@'" : nil));
         mappingProvider = [[RKObjectMappingProvider new] autorelease];        
-        [mappingProvider setObjectMapping:self.objectMapping forKeyPath:rootKeyPath];
+        [mappingProvider setMapping:self.objectMapping forKeyPath:rootKeyPath];
     } else {
         RKLogDebug(@"No object mapping provider, using mapping provider from parent object manager to perform KVC mapping");
         mappingProvider = self.objectManager.mappingProvider;

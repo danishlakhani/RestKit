@@ -53,10 +53,10 @@
     [catObjectMapping addAttributeMapping:[RKObjectAttributeMapping mappingFromKeyPath:@"updated-at" toKeyPath:@"updatedAt"]];
     [catObjectMapping addAttributeMapping:[RKObjectAttributeMapping mappingFromKeyPath:@"id" toKeyPath:@"railsID"]];
     
-    [catObjectMapping addRelationshipMapping:[RKObjectRelationshipMapping mappingFromKeyPath:@"cats" toKeyPath:@"cats" objectMapping:catObjectMapping]];
+    [catObjectMapping addRelationshipMapping:[RKObjectRelationshipMapping mappingFromKeyPath:@"cats" toKeyPath:@"cats" withMapping:catObjectMapping]];
     
-    [provider setObjectMapping:humanMapping forKeyPath:@"human"];
-    [provider setObjectMapping:humanMapping forKeyPath:@"humans"];
+    [provider setMapping:humanMapping forKeyPath:@"human"];
+    [provider setMapping:humanMapping forKeyPath:@"humans"];
     
     RKObjectMapping* humanSerialization = [RKObjectMapping mappingForClass:[NSDictionary class]];
     [humanSerialization addAttributeMapping:[RKObjectAttributeMapping mappingFromKeyPath:@"name" toKeyPath:@"name"]];
@@ -142,7 +142,6 @@
     [expectThat(loader.failureError) should:be(nil)];
     assertThat(loader.objects, isNot(empty()));
 	RKHuman* blake = (RKHuman*)[loader.objects objectAtIndex:0];
-	NSLog(@"Blake: %@ (name = %@)", blake, blake.name);
 	[expectThat(blake.name) should:be(@"Blake Watters")];
 }
 
@@ -177,7 +176,7 @@
     RKObjectMapping* mapping = [RKObjectMapping mappingForClass:[RKObjectMapperSpecModel class]];
     mapping.rootKeyPath = @"human";
     [mapping mapAttributes:@"name", @"age", nil];
-    [manager.mappingProvider setObjectMapping:mapping forKeyPath:@"human"];
+    [manager.mappingProvider setMapping:mapping forKeyPath:@"human"];
     [manager.mappingProvider setSerializationMapping:mapping forClass:[RKObjectMapperSpecModel class]];
     
     RKObjectMapperSpecModel* human = [[RKObjectMapperSpecModel new] autorelease];
